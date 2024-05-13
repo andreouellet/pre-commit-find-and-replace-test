@@ -1,0 +1,31 @@
+---
+################################
+# This file is used by the pre-commit-search-and-replace hook in .pre-commit-config.yaml,
+# and it contains a list of values for the pre-commit search and replace operations which transform the template files
+# into having the desired values for the new project created from this template project.
+################################
+
+- search: ${BUSINESS_UNIT}
+  replacement: 'examplebu'
+- search: ${PROJECT_NAME}
+  replacement: 'exampleproject'
+- search: ${GITHUB_REPO_URL}
+  replacement: 'https://github.com/examplebu/exampleproject'
+- search: ${PROJECT_DESCRIPTION_SLUG}
+  replacement: 'Example project used to demonstrate all aspects of a project development and deployment'
+- search: tucowsinc/iaascloudenablement
+  replacement: 'tucowsinc/example-github-team-name'
+- search: ${PROJECT_CONTRIBUTORS}
+  replacement: '* [Andre Ouellet](mailto:aouellet@tucowsinc.com)'
+
+################################
+# Syntax allowed for this file:
+################################
+#   search:      (required) the string or regexp to search for.
+#                To use a regexp, start and end with slashes. e.g. /^mypattern/
+#   replacement: the string to replace matched strings with. If specified, files will be "fixed".
+#                Match groups can be referenced here (e.g. \1)
+#   insensitive: boolean whether the regexp should be case-insensitive. default: false
+#   extended:    boolean whether the regexp should be extended. default: false
+#   description: short text description of purpose of the entry.
+################################
