@@ -23,6 +23,14 @@ repos:
   #     args: ["--read-from-file", "true"]
   #     files: README.md
   #     verbose: true
+  - repo: local
+    hooks:
+    - id: find-and-replace
+      name: find-and-replace
+      description: Finds strings in files and replaces them with other strings.
+      entry: find-and-replace
+      language: python
+      types: [text]
 #  - repo: https://github.com/mattlqx/pre-commit-search-and-replace
 #    rev: v1.1.0
 #    hooks:
