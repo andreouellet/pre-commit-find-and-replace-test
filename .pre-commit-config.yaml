@@ -8,19 +8,21 @@ repos:
   # -----------------------------
   # Replace placeholders in template files with values for your project
   # -----------------------------
-  - repo: local
-    hooks:
-    - id: find-and-replace
-      name: find-and-replace
-      description: Find and replace strings
-      entry: ../pre-commit-find-and-replace/find_and_replace/main.py
-      language: python
-      pass_filenames: true
-      exclude_types:
-        - binary
-      args: [--config .project-properties.json]
-      files: README.md
-      verbose: true
+  # - repo: local
+  #   hooks:
+  #   - id: find-and-replace
+  #     name: find-and-replace
+  #     description: Find and replace strings
+  #     entry: find-and-replace
+  #     language: python
+  #     pass_filenames: true
+  #     exclude_types:
+  #       - binary
+  #     # args: ["--file", "/Users/hamed/Desktop/tucows-code/python-test/README.md", "--search", "aaaa", "--replacement", "HAMED"]
+  #     # args: ["--file", "./test.txt.test", "--read-from-file", "true"]
+  #     args: ["--read-from-file", "true"]
+  #     files: README.md
+  #     verbose: true
 #  - repo: https://github.com/mattlqx/pre-commit-search-and-replace
 #    rev: v1.1.0
 #    hooks:
