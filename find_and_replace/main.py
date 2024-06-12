@@ -21,13 +21,13 @@ def main():
 
     if args.read_from_file:
         try:
-            with open(os.path.join(os.getcwd(), args.replacements_file), 'r') as f:
+            with open(os.path.join(os.getcwd(), args.config), 'r') as f:
                 replacements = json.load(f)
         except FileNotFoundError:
-            print(f"Error: {args.replacements_file} file not found.")
+            print(f"Error: {args.config} file not found.")
             sys.exit(1)
         except json.JSONDecodeError:
-            print(f"Error: {args.replacements_file} is not a valid JSON file.")
+            print(f"Error: {args.config} is not a valid JSON file.")
             sys.exit(1)
 
         for filename in args.files:
