@@ -87,11 +87,11 @@ def main():
     parser.add_argument('files', nargs='*', help='Files to perform search and replace')
     parser.add_argument('--search', help='Text to search for')
     parser.add_argument('--replacement', help='Text to replace with')
-    parser.add_argument('--use-replacements-file', type=bool, default=False, help='Use search and replacement strings from replacements file')
+    parser.add_argument('--read-from-file', type=bool, default=True, help='Read search and replacement strings from file')
     parser.add_argument('--replacements-file', default='replacements.json', help='Path to the replacements file')
     args = parser.parse_args()
 
-    if args.use_replacements_file:
+    if args.read_from_file:
         try:
             with open(os.path.join(os.getcwd(), args.replacements_file), 'r') as f:
                 replacements = json.load(f)
