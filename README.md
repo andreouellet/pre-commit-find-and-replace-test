@@ -56,7 +56,7 @@ python3 -m unittest tests/test_main.py
 
 ```
   pip install find-and-replace-template-commit-check
-   find-and-replace --config replacements.json README1.md README2.md
+   find-and-replace --config .find-and-replace.json README1.md README2.md
 ```
 
 
