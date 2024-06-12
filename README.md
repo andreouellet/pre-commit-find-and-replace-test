@@ -56,7 +56,7 @@ python3 -m unittest tests/test_main.py
 
 ```
   pip install find-and-replace-template-commit-check
-   find-and-replace --replacements-file replacements.json README1.md README2.md
+   find-and-replace --config replacements.json README1.md README2.md
 ```
 
 
@@ -65,7 +65,7 @@ python3 -m unittest tests/test_main.py
 ```
 find-and-replace -h
 usage: find-and-replace [-h] [--search SEARCH] [--replacement REPLACEMENT] [--read-from-file READ_FROM_FILE]
-                        [--replacements-file REPLACEMENTS_FILE]
+                        [--config REPLACEMENTS_FILE]
                         [files ...]
 
 This script performs search and replace operations on one or more files. It supports two modes of operation: Direct Mode and
@@ -82,7 +82,7 @@ options:
                         Text to replace with
   --read-from-file READ_FROM_FILE
                         Read search and replacement strings from file
-  --replacements-file REPLACEMENTS_FILE
+  --config REPLACEMENTS_FILE
                         Path to the replacements file
 
 ```
