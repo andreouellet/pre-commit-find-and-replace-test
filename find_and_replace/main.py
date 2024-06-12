@@ -83,7 +83,7 @@ def replace_in_file(filename, search, replacement):
             print(line.replace(rf"{search}", rf"{replacement}"), end='')
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="This script performs search and replace operations on one or more files. It supports two modes of operation: Direct Mode and File Mode. In Direct Mode, you specify the search and replacement strings directly on the command line. In File Mode, the script reads the search and replacement strings from a JSON file.")
     parser.add_argument('files', nargs='*', help='Files to perform search and replace')
     parser.add_argument('--search', help='Text to search for')
     parser.add_argument('--replacement', help='Text to replace with')
