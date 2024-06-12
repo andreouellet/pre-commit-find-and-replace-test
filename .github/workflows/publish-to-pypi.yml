@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-n-publish:
@@ -31,4 +34,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          password: pypi-AgEIcHlwaS5vcmcCJGY5MTEyNDE1LWY5NjEtNDhkMS04Yzk1LWNmM2FiMDFhNTVkNgACLlsxLFsiZmluZC1hbmQtcmVwbGFjZS10ZW1wbGF0ZS1jb21taXQtY2hlY2siXV0AAixbMixbIjdjNGU3MzI0LThlMWQtNDBlYi04MWY2LTY2MThlNzAwMjU0YiJdXQAABiAzLKBWA6s51jfJM2J1ieTvADjY3nV9FlpjHbUJmUHjfA
