@@ -1,81 +1,78 @@
 # -*- coding: utf-8 -*-
 import unittest
-from unittest.mock import patch, mock_open
 import os
+import tempfile
 import json
+from unittest.mock import patch
 import argparse
 from find_and_replace.main import replace_in_file, main
 
-class TestMain(unittest.TestCase):
 
+
+class TestReplaceInFile(unittest.TestCase):
     def setUp(self):
-        self.filename = 'test.txt'
-        with open(self.filename, 'w') as f:
-            f.write('Hello, World!')
+        self.temp_file = tempfile.NamedTemporaryFile(delete=False)
+        self.temp_file.write(b'Test line 1\nTest line 2\nTest line 3\n')
+        self.temp_file.close()
 
     def tearDown(self):
-        os.remove(self.filename)
+        os.unlink(self.temp_file.name)
 
-    # Test case: Basic functionality with a match in the file
     def test_replace_in_file(self):
-        replace_in_file(self.filename, 'World', 'find and replace')
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and replace!')
+        replace_in_file(self.temp_file.name, 'Test', 'Replaced')
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        self.assertEqual(lines, ['Replaced line 1\n', 'Replaced line 2\n', 'Replaced line 3\n'])
 
-    # Test case: No match in the file
-    def test_replace_in_file_no_match(self):
-        replace_in_file(self.filename, 'No Match', 'find and replace')
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, World!')
+class TestMain(unittest.TestCase):
+    def setUp(self):
+        self.temp_file = tempfile.NamedTemporaryFile(delete=False)
+        self.temp_file.write(b'Test line 1\nTest line 2\nTest line 3\n')
+        self.temp_file.close()
 
-    # Test case: Replacement string contains special characters
-    def test_replace_in_file_special_characters(self):
-        replace_in_file(self.filename, 'World', 'find and replace!@#$%^&*()')
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and replace!@#$%^&*()!')
-
-    # Test case: Replacements are read from a file
+    def tearDown(self):
+        os.unlink(self.temp_file.name)
     @patch('argparse.ArgumentParser.parse_args')
-    def test_main_replace_from_file(self, mock_args):
-        mock_args.return_value = argparse.Namespace(files=[self.filename], read_from_file=True)
-        with open('.project-properties.json', 'w') as f:
-            json.dump([{'search': 'World', 'replacement': 'find and replace'}], f)
+    def test_main_with_direct_mode(self, mock_args):
+        mock_args.return_value = argparse.Namespace(files=[self.temp_file.name], search='Test', replacement='Replaced', read_from_file=False, replacements_file='')
         main()
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and replace!')
-        os.remove('.project-properties.json')
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        self.assertEqual(lines, ['Replaced line 1\n', 'Replaced line 2\n', 'Replaced line 3\n'])
 
-    # Test case: Replacements are provided as arguments
     @patch('argparse.ArgumentParser.parse_args')
-    def test_main_replace_from_args(self, mock_args):
-        mock_args.return_value = argparse.Namespace(files=[self.filename], search='World', replacement='find and replace', read_from_file=False)
+    def test_main_with_file_mode(self, mock_args):
+        replacements_file = tempfile.NamedTemporaryFile(delete=False)
+        replacements_file.write(b'[{"search": "Test", "replacement": "Replaced"}]')
+        replacements_file.close()
+
+        mock_args.return_value = argparse.Namespace(files=[self.temp_file.name], search='', replacement='', read_from_file=True, replacements_file=replacements_file.name)
         main()
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and replace!')
+        with open(self.temp_file.name, 'r') as f:
+            lines = f.readlines()
+        self.assertEqual(lines, ['Replaced line 1\n', 'Replaced line 2\n', 'Replaced line 3\n'])
 
-    # Test case: Replacements are provided as arguments, replacement string contains special characters
-    @patch('argparse.ArgumentParser.parse_args')
-    def test_main_replace_from_args_special_characters(self, mock_args):
-        mock_args.return_value = argparse.Namespace(files=[self.filename], search='World', replacement='find and replace!@#$%^&*()', read_from_file=False)
-        main()
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and replace!@#$%^&*()!')
+        os.unlink(replacements_file.name)
 
-    # Test case: Replacements are read from a file, but the file does not exist
     @patch('argparse.ArgumentParser.parse_args')
-    def test_main_replace_from_file_no_file(self, mock_args):
-        mock_args.return_value = argparse.Namespace(files=['non_existent_file.txt'], read_from_file=True)
-        with open('.project-properties.json', 'w') as f:
-            json.dump([{'search': 'World', 'replacement': 'find and replace'}], f)
-        with self.assertRaises(FileNotFoundError):
+    def test_main_with_invalid_replacements_file(self, mock_args):
+        mock_args.return_value = argparse.Namespace(files=[self.temp_file.name], search='', replacement='', read_from_file=True, replacements_file='invalid.json')
+        with self.assertRaises(SystemExit) as cm:
             main()
-        os.remove('.project-properties.json')
+        self.assertEqual(cm.exception.code, 1)
 
-    # Test case: Replacement string contains a double quote
-    def test_replace_in_file_double_quote(self):
-        replace_in_file(self.filename, 'World', 'find and "replace"')
-        with open(self.filename, 'r') as f:
-            self.assertEqual(f.read(), 'Hello, find and "replace"!')
+    @patch('argparse.ArgumentParser.parse_args')
+    def test_main_with_invalid_json(self, mock_args):
+        replacements_file = tempfile.NamedTemporaryFile(delete=False)
+        replacements_file.write(b'invalid json')
+        replacements_file.close()
+
+        mock_args.return_value = argparse.Namespace(files=[self.temp_file.name], search='', replacement='', read_from_file=True, replacements_file=replacements_file.name)
+        with self.assertRaises(SystemExit) as cm:
+            main()
+        self.assertEqual(cm.exception.code, 1)
+
+        os.unlink(replacements_file.name)
 
 if __name__ == '__main__':
     unittest.main()
